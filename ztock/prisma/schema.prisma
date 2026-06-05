@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  email String @unique
+  user_name String?
+  store Store?
+  created_at DateTime @default(now())
+}
+
+model Store {
+  id String @id @default(uuid()) @db.Uuid
+  store_name String
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique @db.Uuid
+  created_at DateTime @default(now())
+  product Product[]
+  transaction Transaction[]
+}
+
+model Product {
+  id String @id @default(uuid()) @db.Uuid
+  product_name String
+  product_description String?
+  store Store @relation(fields: [store_Id], references: [id])
+  store_Id String @db.Uuid
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  transaction_item TransactionItem[]
+}
+
+model Transaction {
+  id String @id @default(uuid()) @db.Uuid
+  type Type @default(ENTRADA)
+  store Store @relation(fields: [store_Id], references: [id])
+  store_Id String @db.Uuid
+  send_date DateTime
+  created_at DateTime @default(now())
+  transaction_item TransactionItem[]
+}
+
+model TransactionItem {
+  id String @id @default(uuid()) @db.Uuid
+  product Product @relation(fields: [product_Id], references: [id])
+  product_Id String @db.Uuid
+  quantity Int
+  transaction Transaction @relation(fields: [transaction_Id],references: [id])
+  transaction_Id String @db.Uuid
+  created_at DateTime @default(now())
+}
+
+enum Type {
+  ENTRADA
+  SALIDA
+}
