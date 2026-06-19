@@ -27,7 +27,7 @@ model Store {
   userId String @unique @db.Uuid
   created_at DateTime @default(now())
   product Product[]
-  transaction Transaction[]
+  transaction StockTransaction[]
 }
 
 model Product {
@@ -41,7 +41,7 @@ model Product {
   transaction_item TransactionItem[]
 }
 
-model Transaction {
+model StockTransaction {
   id String @id @default(uuid()) @db.Uuid
   type Type @default(ENTRADA)
   store Store @relation(fields: [store_Id], references: [id])
@@ -56,7 +56,7 @@ model TransactionItem {
   product Product @relation(fields: [product_Id], references: [id])
   product_Id String @db.Uuid
   quantity Int
-  transaction Transaction @relation(fields: [transaction_Id],references: [id])
+  transaction StockTransaction @relation(fields: [transaction_Id],references: [id])
   transaction_Id String @db.Uuid
   created_at DateTime @default(now())
 }
